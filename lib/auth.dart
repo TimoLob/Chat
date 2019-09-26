@@ -58,10 +58,14 @@ class AuthService {
     return ref.setData({
       'uid':user.uid,
       'email':user.email,
-      'photoURL':user.photoUrl,
-      'displayName':user.displayName,
       'lastSeen':DateTime.now(),
     },merge: true);
+  }
+
+  Future<void> updateUserDataWithMap(FirebaseUser user, Map<String,dynamic> map) async {
+    DocumentReference ref = _db.collection('users').document(user.uid);
+
+    return ref.setData(map,merge:true);
   }
 
   void signOut() {

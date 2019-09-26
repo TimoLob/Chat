@@ -12,12 +12,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  IdTokenResult _tokenResult;
-  Future<IdTokenResult> _tokenResultFuture;
+  String _displayName;
   @override
   void initState() {
-    _tokenResultFuture = widget.user.getIdToken();
-    _tokenResultFuture.then((value) => _tokenResult=value);
+     _displayName = widget.user.displayName;
     super.initState();
   }
 
@@ -28,22 +26,8 @@ class _HomePageState extends State<HomePage> {
           appBar: AppBar(
             title: Text("Login Successful "),
           ),
-          body: FutureBuilder(
-            future: _tokenResultFuture,
-            builder:
-                (BuildContext context, AsyncSnapshot<IdTokenResult> snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.waiting:
-                  return CircularProgressIndicator();
-                  break;
-                case ConnectionState.done:
-                  return Text(snapshot.data.claims['user_id']);
-                  break;
-                default:
-                  return Text("I don't know how I got here.");
-              }
-            },
-          )),
+          body: Text("Welcome $_displayName"),
+    ),
     );
   }
 }

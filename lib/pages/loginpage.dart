@@ -1,4 +1,5 @@
 import 'package:chat/auth.dart';
+import 'package:chat/pages/choose_displayname.dart';
 import 'package:chat/pages/homepage.dart';
 import 'package:chat/widgets/chatMessage.dart';
 import 'package:flutter/material.dart';
@@ -49,14 +50,25 @@ class _LoginPageState extends State<LoginPage> {
           ),
           RaisedButton(
             child: Text("Sign in with Google"),
-            onPressed: () {
-              authService.googleSignIn();
-            },
+            onPressed: () async {
+              FirebaseUser user = await authService.googleSignIn();
+              nextScreen(context, user);
+              },
           )
           ],
         ),
       ),
     );
+  }
+
+  void nextScreen(BuildContext context,FirebaseUser user)
+  {
+    print(user.displayName);
+    if(user.displayName == null)
+      Navigator.push(context, MaterialPageRoute(builder: (context) => ChooseDisplayName(user:user)));
+    else
+      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(user:user)));
+
   }
 
   Future<void> signIn() async{
@@ -68,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
     try{
       
       FirebaseUser user = await authService.emailSignIn(_email,_password);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(user:user)));
+      nextScreen(context, user);
     }catch(e) {
       print(e);
     }
