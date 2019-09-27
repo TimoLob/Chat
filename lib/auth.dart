@@ -4,6 +4,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AuthService {
+  // ! This is supposed to be a Singleton. Use the instance authService in the global namespace, don't make a new one
+  // TODO: make actually singleton
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _db = Firestore.instance;
@@ -66,16 +68,21 @@ class AuthService {
     }, merge: true);
   }
 
-  Future<void> updateUserDataWithMap(FirebaseUser user, Map<String, dynamic> map) async {
+  Future<void> updateUserDataWithMap(
+      FirebaseUser user, Map<String, dynamic> map) async {
     DocumentReference ref = _db.collection('users').document(user.uid);
 
     return ref.setData(map, merge: true);
   }
 
-  Future<Map<String,dynamic>> getUserProfile(FirebaseUser user) async {
-    DocumentReference ref = _db.collection("users").document(user.uid);
+  Future<Map<String, dynamic>> getUserProfileByID(String uid) async {
+    DocumentReference ref = _db.collection("users").document(uid);
     DocumentSnapshot snap = await ref.get();
     return snap.data;
+  }
+
+  Future<Map<String, dynamic>> getUserProfile(FirebaseUser user) async {
+    return await getUserProfileByID(user.uid);
   }
 
   void signOut() {

@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Map<String,dynamic> _profile;
+  Map<String, dynamic> _profile;
   Future profileFuture;
   @override
   void initState() {
@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
           future: profileFuture,
           builder: (context, AsyncSnapshot snapshot) {
             print(snapshot.connectionState);
-            switch(snapshot.connectionState) {
+            switch (snapshot.connectionState) {
               case ConnectionState.active:
               case ConnectionState.waiting:
                 return Text("Loading...");

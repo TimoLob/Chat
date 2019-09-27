@@ -44,7 +44,9 @@ class _EditProfileState extends State<EditProfile> {
     final AsyncSnapshot<FirebaseUser> snapshot = widget.snapshot;
     if (!formState.validate()) return;
     formState.save();
-    authService.updateUserDataWithMap(snapshot.data, {"displayName":_displayName});
-    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(user:snapshot.data)));
+    authService
+        .updateUserDataWithMap(snapshot.data, {"displayName": _displayName});
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => HomePage(user: snapshot.data)));
   }
 }

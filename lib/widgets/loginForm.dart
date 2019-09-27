@@ -12,26 +12,17 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   String _password;
   String _email;
-  Map<String, dynamic> _profileData;
-  StreamSubscription _subscription;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    _subscription = authService.profile.listen(updateProfileData);
   }
 
   @override
   void dispose() {
-    _subscription.cancel();
     super.dispose();
-  }
-
-  void updateProfileData(data) {
-    _profileData = data;
-    print(data.toString());
   }
 
   @override
