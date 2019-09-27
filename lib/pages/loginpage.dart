@@ -1,88 +1,38 @@
 import 'package:chat/auth.dart';
-import 'package:chat/pages/choose_displayname.dart';
-import 'package:chat/pages/homepage.dart';
-import 'package:chat/widgets/chatMessage.dart';
+import 'package:chat/widgets/loginForm.dart';
+import 'package:chat/widgets/profile.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
-class LoginPage extends StatefulWidget {
-  LoginPage({Key key}) : super(key: key);
+class LoginPage extends StatelessWidget {
+  const LoginPage({Key key}) : super(key: key);
 
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  String _password;
-  String _email;
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Chat"),
+        title: Text("Login Page"),
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: <Widget>[
-          TextFormField(
-            validator: (input) {
-              if(input.isEmpty)
-                return "Please type a valid email";
-              return null;
-            },
-            onSaved: (input) => _email = input,
-            decoration: InputDecoration(labelText: "Email"),
-          ),
-          TextFormField(
-            validator: (input) {
-              if(input.length<6)
-                return "Your password needs to be at least 6 characters";
-              return null;
-            },
-            onSaved: (input) => _password = input,
-            decoration: InputDecoration(labelText: "Password"),
-            obscureText: true,
-          ),
-          RaisedButton(
-            child: Text("Sign in"),
-            onPressed: signIn,
-          ),
-          RaisedButton(
-            child: Text("Sign in with Google"),
-            onPressed: () async {
-              FirebaseUser user = await authService.googleSignIn();
-              nextScreen(context, user);
-              },
-          )
-          ],
-        ),
+      body: StreamBuilder(
+        stream: authService.user,
+        builder: (context, snapshot) {
+          print("SnapshotData: ${snapshot.data.toString()}");
+          if (snapshot.hasData) {
+            return Column(
+              children: <Widget>[
+                RaisedButton(
+                  onPressed: () => authService.signOut(),
+                  color: Colors.red,
+                  textColor: Colors.white,
+                  child: Text("Signout"),
+                ),
+                EditProfile(snapshot: snapshot),
+              ],
+            );
+          } else {
+            return LoginForm();
+          }
+        },
       ),
     );
-  }
-
-  void nextScreen(BuildContext context,FirebaseUser user)
-  {
-    print(user.displayName);
-    if(user.displayName == null)
-      Navigator.push(context, MaterialPageRoute(builder: (context) => ChooseDisplayName(user:user)));
-    else
-      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(user:user)));
-
-  }
-
-  Future<void> signIn() async{
-    final formState = _formKey.currentState;
-    if(!formState.validate())
-      return;
-    print("Valid Form");
-    formState.save();
-    try{
-      
-      FirebaseUser user = await authService.emailSignIn(_email,_password);
-      nextScreen(context, user);
-    }catch(e) {
-      print(e);
-    }
   }
 }

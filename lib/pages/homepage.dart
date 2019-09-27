@@ -1,3 +1,4 @@
+import 'package:chat/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -12,10 +13,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String _displayName;
+  Map<String,dynamic> _profile;
+  Future profileFuture;
   @override
   void initState() {
-     _displayName = widget.user.displayName;
+    profileFuture = authService.getUserProfile(widget.user);
+    profileFuture.then((value) => _profile = value);
     super.initState();
   }
 
@@ -23,11 +26,26 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
-          appBar: AppBar(
-            title: Text("Login Successful "),
-          ),
-          body: Text("Welcome $_displayName"),
-    ),
+        appBar: AppBar(
+          title: Text("Homepage"),
+        ),
+        body: FutureBuilder(
+          future: profileFuture,
+          builder: (context, AsyncSnapshot snapshot) {
+            print(snapshot.connectionState);
+            switch(snapshot.connectionState) {
+              case ConnectionState.active:
+              case ConnectionState.waiting:
+                return Text("Loading...");
+              case ConnectionState.done:
+                return Text("Welcome ${_profile["displayName"]}");
+              default:
+                return Text("How did I get here?"); // TODO error handling
+
+            }
+          },
+        ),
+      ),
     );
   }
 }
