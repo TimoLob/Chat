@@ -1,8 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ChatMessage extends StatelessWidget {
   final String message;
-  final DateTime timestamp;
+  final Timestamp timestamp;
   const ChatMessage({
     Key key,
     @required this.message,
@@ -11,10 +12,11 @@ class ChatMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp.millisecondsSinceEpoch);
     return Container(
       child: ListTile(
         title: Text(message),
-        leading: Text("${timestamp.hour}:${timestamp.minute}"),
+        leading: Text("${date.hour}:${date.minute}"),
         ),
     );
   }

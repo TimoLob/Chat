@@ -1,4 +1,5 @@
 import 'package:chat/auth.dart';
+import 'package:chat/widgets/messageFeed.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage> {
               case ConnectionState.waiting:
                 return Text("Loading...");
               case ConnectionState.done:
-                return Text("Welcome ${_profile["displayName"]}");
+                return MessageFeed();
               default:
                 return Text("How did I get here?"); // TODO error handling
 

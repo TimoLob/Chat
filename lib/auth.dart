@@ -88,6 +88,12 @@ class AuthService {
   void signOut() {
     _auth.signOut();
   }
+
+  Future<List<DocumentSnapshot>> getCollection(String collection) async {
+    CollectionReference col = _db.collection(collection);
+    QuerySnapshot querySnap = await col.getDocuments();
+    return querySnap.documents;
+  }
 }
 
 final AuthService authService = AuthService();
